@@ -1,16 +1,23 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const http = require('http');
+
+const { Server } = require("socket.io");
+const http = require("http");
 const server = http.createServer(app);
+const io = new Server(server);
 
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 
-app.get('/', (req, res) => {
-  res.send('<h1>Hello world</h1>');
+app.get("/", (req, res) => {
+  res.render("index");
 });
 
-
 server.listen(9000, () => {
-  console.log('listening on *:9000');
+  console.log("listening on *:9000");
+});
+
+io.on("connection", (socket) => {
+  console.log("New user connected", socket.id);
+  
 });
