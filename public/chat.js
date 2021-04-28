@@ -39,7 +39,7 @@ $(function () {
                     />
                   </div>
                   <div class="chat_ib">
-                    <h5>Yourself <span class="chat_date">(yourself)</span></h5>
+                    <h5>${user.username}<span class="chat_date">(yourself)</span></h5>
                   </div>
             </div>
           `)
@@ -65,7 +65,7 @@ $(function () {
                     />
                   </div>
                   <div class="chat_ib">
-                    <h5>${user.username}<span class="chat_date">Dec 25</span></h5>
+                    <h5>${user.username}</h5>
                    
                   </div>
                 </div>
@@ -85,7 +85,7 @@ $(function () {
     $(`#${id}`).addClass("active_chat");
   }
 
-  function sendMessage(to, message) {
+  function sendMessage(message) {
     socket.emit("privateMessage", {
       message,
       to: selectedUser.id,
@@ -95,6 +95,12 @@ $(function () {
       message,
       fromSelf: true,
     });
+
+    $("msg_history").append(`div class="outgoing_msg"`).html(
+      `<div class="sent_msg">
+        <p>${message}</p>
+      </div>`
+    );
   }
 
   function receiveMessage(from, message) {
@@ -102,5 +108,12 @@ $(function () {
       message,
       from,
     });
+    $("msg_history").append(`div class="incoming_msg"`).html(
+        `<div class="received_msg">
+        <div class="received_withd_msg">
+          <p>${message}</p>
+        </div>
+      </div>`
+      );
   }
 });
