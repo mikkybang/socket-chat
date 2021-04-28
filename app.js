@@ -17,7 +17,17 @@ server.listen(9000, () => {
   console.log("listening on *:9000");
 });
 
+const activeUsers = [];
+
 io.on("connection", (socket) => {
   console.log("New user connected", socket.id);
-  
+  const existingUser = activeUsers.find((users) => users.id == socket.id);
+  if (!existingUser) {
+    socket.username = `user${Math.random()}`;
+    console.log(socket.username)
+
+    io.sockets.emit("users", activeUsers)
+  }
+
+  socket.emit("setUsername");
 });
