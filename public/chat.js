@@ -3,7 +3,19 @@ $(function () {
 
   let activeUsers = [];
 
-  let selectedUser = null;
+  let selectedUser = {
+    id: null,
+    messages: [],
+  };
+
+  let user = null
+
+  let messages = [];
+
+  socket.on("connect", () => {
+    console.log("connected");
+    user = socket.id
+  });
 
   socket.on("users", ({ users }) => {
     console.log(users);
@@ -73,6 +85,18 @@ $(function () {
     socket.emit("privateMessage", {
       message,
       to: selectedUser,
+    });
+
+    selectedUser.messages.push({
+      message,
+      fromSelf: true,
+    });
+  }
+
+  function receiveMessage(from, message) {
+    messages.push({
+      message,
+      from,
     });
   }
 });
