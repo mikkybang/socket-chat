@@ -23,10 +23,13 @@ io.on("connection", (socket) => {
   console.log("New user connected", socket.id);
   const existingUser = activeUsers.find((users) => users.id == socket.id);
   if (!existingUser) {
-    socket.username = `user${Math.random()}`;
-    console.log(socket.username)
-
-    io.sockets.emit("users", activeUsers)
+    socket.username = `user-${((Math.floor(Math.random()*100))*1e3).toString(36)}`;
+    console.log(socket.username);
+    activeUsers.push({
+      id: socket.id,
+      username: socket.username,
+    });
+    io.sockets.emit("users", { users: activeUsers });
   }
 
   socket.emit("setUsername");
