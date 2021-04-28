@@ -3,15 +3,13 @@ $(function () {
 
   let activeUsers = [];
 
-  let selectedUser = null
+  let selectedUser = null;
 
   socket.on("users", ({ users }) => {
     console.log(users);
     updateUserList(users);
     activeUsers.push(users);
   });
-
-  
 
   function updateUserList(users) {
     $("#active-users").html("");
@@ -65,15 +63,16 @@ $(function () {
     });
   }
 
-  function createUserMessageBox() {
-
-  }
+  function createUserMessageBox() {}
 
   function changeTab(id) {
-    selectedUser = id
+    selectedUser = id;
   }
 
   function sendMessage(to, message) {
-      
+    socket.emit("privateMessage", {
+      message,
+      to: selectedUser,
+    });
   }
 });
