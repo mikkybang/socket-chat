@@ -35,6 +35,7 @@ io.on("connection", (socket) => {
   }
 
   socket.on("privateMessage", ({ message, to }) => {
+      console.log(message, to)
     socket.to(to).emit("privateMessage", { message, from: socket.id });
   });
 

@@ -22,6 +22,13 @@ $(function () {
     }
   });
 
+  const sendButton = $("#send-button");
+
+  sendButton.click(() => {
+    sendMessage(inputElement.value);
+    inputElement.value = "";
+  });
+
   socket.on("connect", () => {
     console.log("connected");
     user.id = socket.id;
@@ -97,6 +104,8 @@ $(function () {
     $(`#${selectedUser.id}`).removeClass("active_chat");
     selectedUser.id = id;
     $(`#${id}`).addClass("active_chat");
+
+    $("#messages").html("");
   }
 
   function sendMessage(message) {
@@ -110,11 +119,13 @@ $(function () {
       fromSelf: true,
     });
 
-    $(".msg_history").append(`div class="outgoing_msg"`).html(
-      `<div class="sent_msg">
-        <p>${message}</p>
-      </div>`
-    );
+    $("#messages").append(`
+    <div class="outgoing_msg">
+        <div class="sent_msg">
+            <p>${message}</p>
+        </div>
+      </div>
+    `);
   }
 
   function receiveMessage(from, message) {
@@ -122,12 +133,15 @@ $(function () {
       message,
       from,
     });
-    $(".msg_history").append(`div class="incoming_msg"`).html(
-      `<div class="received_msg">
+    selectedUser.id = from;
+    $(`#${from}`).addClass("active_chat");
+    $("#messages").append(`<div class="incoming_msg">
+    <div class="received_msg">
         <div class="received_withd_msg">
           <p>${message}</p>
         </div>
-      </div>`
-    );
+      </div>
+      </div>
+    `);
   }
 });
