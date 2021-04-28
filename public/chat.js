@@ -13,6 +13,15 @@ $(function () {
     messages: [],
   };
 
+  const inputElement = document.getElementById("message-input");
+
+  inputElement.addEventListener("keyup", function (event) {
+    if (event.key === "Enter") {
+      sendMessage(inputElement.value);
+      inputElement.value = "";
+    }
+  });
+
   socket.on("connect", () => {
     console.log("connected");
     user.id = socket.id;
@@ -23,6 +32,11 @@ $(function () {
     console.log(users);
     updateUserList(users);
     activeUsers.push(users);
+  });
+
+  socket.on("privateMessage", ({ message, from }) => {
+    console.log(message, from);
+    receiveMessage(from, message);
   });
 
   function updateUserList(users) {
@@ -96,7 +110,7 @@ $(function () {
       fromSelf: true,
     });
 
-    $("msg_history").append(`div class="outgoing_msg"`).html(
+    $(".msg_history").append(`div class="outgoing_msg"`).html(
       `<div class="sent_msg">
         <p>${message}</p>
       </div>`
@@ -108,12 +122,12 @@ $(function () {
       message,
       from,
     });
-    $("msg_history").append(`div class="incoming_msg"`).html(
-        `<div class="received_msg">
+    $(".msg_history").append(`div class="incoming_msg"`).html(
+      `<div class="received_msg">
         <div class="received_withd_msg">
           <p>${message}</p>
         </div>
       </div>`
-      );
+    );
   }
 });
