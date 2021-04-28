@@ -17,13 +17,15 @@ server.listen(9000, () => {
   console.log("listening on *:9000");
 });
 
-const activeUsers = [];
+let activeUsers = [];
 
 io.on("connection", (socket) => {
   console.log("New user connected", socket.id);
-  const existingUser = activeUsers.find((users) => users.id == socket.id);
+  const existingUser = activeUsers.find((user) => user.id == socket.id);
   if (!existingUser) {
-    socket.username = `user-${((Math.floor(Math.random()*100))*1e3).toString(36)}`;
+    socket.username = `user-${(Math.floor(Math.random() * 100) * 1e3).toString(
+      36
+    )}`;
     console.log(socket.username);
     activeUsers.push({
       id: socket.id,
@@ -33,4 +35,10 @@ io.on("connection", (socket) => {
   }
 
   socket.emit("setUsername");
+
+  socket.on("disconnect", () => {
+    console.log(`disconnecting ${socket.id}`);
+    activeUsers = activeUsers.filter((user) => user.id !== socket.id);
+    io.sockets.emit("users", { users: activeUsers });
+  });
 });
