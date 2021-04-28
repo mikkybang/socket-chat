@@ -34,7 +34,9 @@ io.on("connection", (socket) => {
     io.sockets.emit("users", { users: activeUsers });
   }
 
-  socket.emit("setUsername");
+  socket.on("privateMessage", ({ message, to }) => {
+    socket.to(to).emit("privateMessage", { message, from: socket.id });
+  });
 
   socket.on("disconnect", () => {
     console.log(`disconnecting ${socket.id}`);
