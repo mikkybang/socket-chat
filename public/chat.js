@@ -8,13 +8,15 @@ $(function () {
     messages: [],
   };
 
-  let user = null
-
-  let messages = [];
+  let user = {
+    id: null,
+    messages: [],
+  };
 
   socket.on("connect", () => {
     console.log("connected");
-    user = socket.id
+    user.id = socket.id;
+    selectedUser.id = socket.id;
   });
 
   socket.on("users", ({ users }) => {
@@ -28,7 +30,7 @@ $(function () {
     users.forEach((user) => {
       if (socket.id === user.id) {
         $("#active-users").append(
-          $(`<div class="chat_list active_chat" id="${user.id}">`).html(`
+          $(`<div class="chat_list" id="${user.id}">`).html(`
           <div class="chat_people">
                   <div class="chat_img">
                     <img
@@ -45,6 +47,7 @@ $(function () {
 
         $(`#${user.id}`).click(() => {
           console.log("This is yourself");
+          changeTab(user.id);
         });
         return;
       }
@@ -71,20 +74,21 @@ $(function () {
       );
       $(`#${user.id}`).click(() => {
         console.log(user);
+        changeTab(user.id);
       });
     });
   }
 
-  function createUserMessageBox() {}
-
   function changeTab(id) {
-    selectedUser = id;
+    $(`#${selectedUser.id}`).removeClass("active_chat");
+    selectedUser.id = id;
+    $(`#${id}`).addClass("active_chat");
   }
 
   function sendMessage(to, message) {
     socket.emit("privateMessage", {
       message,
-      to: selectedUser,
+      to: selectedUser.id,
     });
 
     selectedUser.messages.push({
@@ -94,7 +98,7 @@ $(function () {
   }
 
   function receiveMessage(from, message) {
-    messages.push({
+    user.messages.push({
       message,
       from,
     });
